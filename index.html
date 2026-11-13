@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mis notas · 1er semestre 26/27</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,650;1,9..144,500&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fbf6f1; --card:#ffffff; --ink:#3b3245; --soft:#857a8f; --line:#efe6ee;
+  --ok:#5fae8b; --bad:#e07a8a; --warn:#e3a24a;
+  --r:22px;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  font-family:Nunito,system-ui,sans-serif; color:var(--ink); background:var(--bg);
+  background-image:
+    radial-gradient(circle at 8% 0%, #fde3ec 0, transparent 32%),
+    radial-gradient(circle at 95% 10%, #e5e1fb 0, transparent 30%),
+    radial-gradient(circle at 50% 100%, #dff3ea 0, transparent 40%);
+  background-attachment:fixed; min-height:100vh;
+}
+.wrap{max-width:1180px;margin:0 auto;padding:34px 20px 80px}
+h1,h2,h3{font-family:Fraunces,Georgia,serif;font-weight:650;margin:0;letter-spacing:-.01em}
+header{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-end;justify-content:space-between;margin-bottom:26px}
+header h1{font-size:clamp(30px,4.4vw,46px);line-height:1.05}
+header h1 em{font-style:italic;font-weight:500;color:#c06b8f}
+header p{margin:8px 0 0;color:var(--soft);font-size:15px}
+.target{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px;display:flex;gap:4px;align-items:center;box-shadow:0 6px 20px -12px #b9a3c7}
+.target span{font-size:13px;color:var(--soft);padding:0 8px 0 10px;font-weight:700}
+.target button{border:0;background:transparent;font:inherit;font-weight:800;color:var(--ink);padding:7px 14px;border-radius:999px;cursor:pointer}
+.target button.on{background:var(--ink);color:#fff}
+
+/* global strip */
+.global{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px}
+.gstat{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px 16px}
+.gstat b{display:block;font-family:Fraunces,serif;font-size:28px;font-weight:650;font-variant-numeric:tabular-nums}
+.gstat small{color:var(--soft);font-size:12.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+
+/* overview */
+.overview{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:34px}
+.ov{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;cursor:pointer;text-align:left;font:inherit;color:inherit;
+  transition:transform .15s, box-shadow .15s;position:relative;overflow:hidden}
+.ov:hover{transform:translateY(-3px);box-shadow:0 14px 30px -18px var(--c2)}
+.ov::before{content:"";position:absolute;inset:0 0 auto 0;height:6px;background:var(--c)}
+.ov .emo{font-size:20px}
+.ov h3{font-size:16px;margin:6px 0 12px;min-height:2.5em;line-height:1.2}
+.ring{--p:0;width:92px;height:92px;border-radius:50%;margin:0 auto 10px;display:grid;place-items:center;
+  background:conic-gradient(var(--c2) calc(var(--p)*1%), #f3edf2 0)}
+.ring div{width:72px;height:72px;border-radius:50%;background:#fff;display:grid;place-items:center;text-align:center;line-height:1}
+.ring b{font-family:Fraunces,serif;font-size:24px}
+.ring small{font-size:10px;color:var(--soft);font-weight:700;display:block;margin-top:2px}
+.ov .meta{font-size:12.5px;color:var(--soft);text-align:center}
+.ov .meta strong{color:var(--ink)}
+
+/* subject sections */
+.subject{background:var(--card);border:1px solid var(--line);border-radius:28px;margin-bottom:26px;overflow:hidden;
+  box-shadow:0 20px 40px -32px #8c6c9c}
+.shead{padding:22px 24px 18px;background:linear-gradient(135deg,var(--c) 0%, #fff 85%);display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;align-items:center}
+.shead h2{font-size:clamp(21px,2.6vw,27px)}
+.shead .code{font-size:12px;color:var(--soft);font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px}
+.reset{border:1px solid #0000;background:#ffffffaa;border-radius:999px;padding:7px 14px;font:inherit;font-size:13px;font-weight:700;color:var(--soft);cursor:pointer}
+.reset:hover{color:var(--bad);border-color:#f3c7cf}
+
+.sbody{display:grid;grid-template-columns:1.45fr 1fr;gap:0}
+.items{padding:8px 24px 22px}
+.stats{padding:20px 24px 24px;background:#fcfafc;border-left:1px solid var(--line)}
+
+.group{margin-top:16px}
+.group h4{margin:0 0 6px;font-size:12px;letter-spacing:.07em;text-transform:uppercase;color:var(--soft);display:flex;justify-content:space-between}
+.row{display:grid;grid-template-columns:1fr auto 108px;gap:10px;align-items:center;padding:7px 0;border-bottom:1px dashed var(--line)}
+.row:last-child{border-bottom:0}
+.row .name{font-weight:600;font-size:14.5px}
+.row .name small{color:var(--soft);font-weight:600;font-size:12px;margin-left:6px}
+.w{font-size:12px;font-weight:800;color:var(--c3);background:var(--c);padding:3px 9px;border-radius:999px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.inp{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:8px 10px;font:inherit;font-weight:800;font-size:15px;text-align:center;
+  color:var(--ink);background:#fff;font-variant-numeric:tabular-nums;transition:border-color .15s, background .15s}
+.inp::placeholder{color:#cfc4d3;font-weight:600}
+.inp:focus{outline:none;border-color:var(--c2);box-shadow:0 0 0 4px var(--c)}
+.inp.filled{background:var(--c);border-color:transparent}
+.inp.err{border-color:var(--bad);background:#fdeef1}
+.pf{display:flex;gap:4px;justify-content:flex-end}
+.pf button{flex:1;border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:7px 0;cursor:pointer;font:inherit;font-weight:800;color:var(--soft)}
+.pf button.on.y{background:#dff3ea;border-color:#bfe3d1;color:#2f7d5a}
+.pf button.on.n{background:#fde3e7;border-color:#f3c3cc;color:#b24a5b}
+
+.big{display:flex;gap:12px;margin-bottom:16px}
+.big > div{flex:1;background:#fff;border:1px solid var(--line);border-radius:18px;padding:12px 14px}
+.big b{font-family:Fraunces,serif;font-size:32px;display:block;line-height:1.1;font-variant-numeric:tabular-nums}
+.big small{font-size:11.5px;color:var(--soft);font-weight:800;text-transform:uppercase;letter-spacing:.05em}
+.bar{height:16px;border-radius:999px;background:#f1ebf1;overflow:hidden;display:flex;margin:6px 0 8px}
+.bar i{display:block;height:100%}
+.bar .e{background:var(--c2)}
+.bar .l{background:repeating-linear-gradient(45deg,#f2c6cf 0 5px,#f8dde3 5px 10px)}
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:12px;color:var(--soft);font-weight:700;margin-bottom:14px}
+.legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px;background:var(--dot)}
+dl{margin:0;display:grid;grid-template-columns:1fr auto;gap:8px 12px;font-size:14px}
+dt{color:var(--soft);font-weight:600}
+dd{margin:0;font-weight:800;text-align:right;font-variant-numeric:tabular-nums}
+.verdict{margin-top:16px;border-radius:16px;padding:12px 14px;font-weight:700;font-size:14px;line-height:1.4}
+.verdict.ok{background:#e3f4ec;color:#2e6f52}
+.verdict.mid{background:#fff3e1;color:#8a5a14}
+.verdict.bad{background:#fde6ea;color:#9c3a4b}
+.verdict.none{background:#f3eef5;color:var(--soft)}
+.note{margin-top:12px;font-size:12px;color:var(--soft);line-height:1.45}
+
+footer{margin-top:30px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;color:var(--soft);font-size:13px}
+footer button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px 16px;font:inherit;font-weight:700;color:var(--ink);cursor:pointer}
+footer button:hover{background:#f6eff7}
+.modal{position:fixed;inset:0;background:#3b324566;display:none;place-items:center;padding:20px;z-index:10}
+.modal.open{display:grid}
+.modal .box{background:#fff;border-radius:24px;padding:22px;max-width:560px;width:100%}
+.modal textarea{width:100%;height:170px;border:1.5px solid var(--line);border-radius:14px;padding:10px;font:12px ui-monospace,monospace;margin:12px 0}
+.modal .acts{display:flex;gap:8px;justify-content:flex-end}
+.modal .acts button{border:0;border-radius:999px;padding:9px 16px;font:inherit;font-weight:800;cursor:pointer;background:#f1ebf1;color:var(--ink)}
+.modal .acts button.primary{background:var(--ink);color:#fff}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(30px);opacity:0;background:var(--ink);color:#fff;padding:10px 18px;border-radius:999px;font-weight:700;font-size:14px;transition:.25s;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media (max-width:1000px){.overview{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:820px){
+  .sbody{grid-template-columns:1fr}
+  .stats{border-left:0;border-top:1px solid var(--line)}
+  .global{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:560px){
+  .overview{grid-template-columns:repeat(2,1fr)}
+  .row{grid-template-columns:1fr auto;}
+  .row .inp,.row .pf{grid-column:1/-1}
+  .items,.stats,.shead{padding-left:16px;padding-right:16px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Mis notas <em>· semestre 26/27</em></h1>
+      <p>Mete cada nota sobre 10 en cuanto la tengas. Se guarda sola en este navegador.</p>
+    </div>
+    <div class="target" role="group" aria-label="Nota objetivo">
+      <span>Mi objetivo</span>
+      <button data-t="5">5</button><button data-t="6">6</button><button data-t="7">7</button><button data-t="8">8</button><button data-t="9">9</button>
+    </div>
+  </header>
+
+  <section class="global" id="global"></section>
+  <section class="overview" id="overview"></section>
+  <main id="subjects"></main>
+
+  <footer>
+    <div>Ponderaciones sacadas de los contratos de enseñanza-aprendizaje 2026/27.</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button id="btnExport">Copiar copia de seguridad</button>
+      <button id="btnImport">Restaurar copia</button>
+    </div>
+  </footer>
+</div>
+
+<div class="modal" id="modal">
+  <div class="box">
+    <h3>Restaurar copia de seguridad</h3>
+    <textarea id="importText" placeholder="Pega aquí el texto que copiaste con «Copiar copia de seguridad»"></textarea>
+    <div class="acts"><button id="mCancel">Cancelar</button><button class="primary" id="mOk">Restaurar</button></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ---------- Datos sacados de los contratos ----------
+// pf:true = actividad Completa/Incompleta (pass/fail) -> ✓ cuenta 10, ✗ cuenta 0
+const PART = [
+  {id:"tut", n:"Tutorías", w:2, pf:true, u:"3 tutorías"},
+  {id:"cal", n:"Gestión de la calidad", w:2, pf:true, u:"formularios"},
+  {id:"prac", n:"Prácticum", w:1, pf:true, u:"asistencia"},
+];
+const SUBJECTS = [
+  {id:"arq", emo:"🏛️", code:"Arquitectura del Software", name:"Arquitectura del Software",
+   c:"#ece6fd", c2:"#9b87e6", c3:"#5a46a8",
+   groups:[
+    {g:"Pruebas parciales", items:[
+      {id:"p1",n:"Parcial 1",u:"U-I",w:10},{id:"p2",n:"Parcial 2",u:"U-II",w:10},
+      {id:"p3",n:"Parcial 3",u:"U-III",w:10},{id:"p4",n:"Parcial 4",u:"U-IV",w:10}]},
+    {g:"Prácticas de laboratorio", items:[
+      {id:"l1",n:"Práctica 1",u:"U-I",w:10},{id:"l2",n:"Práctica 2",u:"U-II",w:10},
+      {id:"l3",n:"Práctica 3",u:"U-III",w:10},{id:"l4",n:"Práctica 4",u:"U-IV",w:10}]},
+    {g:"Proyecto", items:[{id:"pj",n:"Proyecto final + exposición",u:"S15",w:10}]},
+    {g:"Foro", items:[
+      {id:"f1",n:"Post 1",u:"U-I",w:1},{id:"f2",n:"Post 2",u:"U-II",w:1},{id:"f3",n:"Post 3",u:"U-III",w:1},
+      {id:"f4",n:"Post 4",u:"U-IV",w:1},{id:"f5",n:"Post 5",u:"U-IV",w:1}]},
+    {g:"Participación (completa / incompleta)", items:PART},
+   ]},
+  {id:"tay", emo:"🤖", code:"TAyRE", name:"Tecnologías de Automatización y Robotización",
+   c:"#ffe4ec", c2:"#ea89a8", c3:"#a8406a",
+   groups:[
+    {g:"Pruebas parciales", items:[
+      {id:"p1",n:"Parcial 1",u:"U-I",w:6},{id:"p2",n:"Parcial 2",u:"U-II",w:12},{id:"p3",n:"Parcial 3",u:"U-III",w:12}]},
+    {g:"Proyectos", items:[
+      {id:"pj1",n:"Proyecto 01 · RPA",u:"05/11",w:8},{id:"pj2",n:"Proyecto 02 · Maqueta",u:"U-III",w:20}]},
+    {g:"Prácticas Robots Industriales", items:[
+      {id:"r1",n:"RI Práctica 1",w:4.5},{id:"r2",n:"RI Práctica 2",w:4.5},{id:"r3",n:"RI Práctica 3",w:4.5},{id:"r4",n:"RI Práctica 4",w:4.5}]},
+    {g:"Laboratorio IoT", items:[
+      {id:"i1",n:"IoT Práctica 1",w:4.5},{id:"i2",n:"IoT Práctica 2",w:4.5},{id:"i3",n:"IoT Práctica 3",w:4.5},{id:"i4",n:"IoT Práctica 4",w:4.5}]},
+    {g:"Foro", items:[{id:"fo",n:"Posts del foro",u:"4 posts",w:1}]},
+    {g:"Participación (completa / incompleta)", items:PART},
+   ]},
+  {id:"sie", emo:"📊", code:"SIeIN", name:"Sistemas de Información e Inteligencia de Negocio",
+   c:"#dcf3ea", c2:"#6cc19c", c3:"#2c7a58",
+   groups:[
+    {g:"Pruebas parciales", items:[
+      {id:"p1",n:"Parcial 1",u:"U-I",w:10},{id:"p2",n:"Parcial 2",u:"U-II",w:20},{id:"p3",n:"Parcial 3",u:"U-III + IV",w:15}]},
+    {g:"Proyecto", items:[{id:"pj",n:"Entrega del proyecto",u:"U-V",w:20}]},
+    {g:"Exposiciones (≈2,5 % c/u)", items:[
+      {id:"e1",n:"Exposición 1",w:2.5},{id:"e2",n:"Exposición 2",w:2.5},{id:"e3",n:"Exposición 3",w:2.5},{id:"e4",n:"Exposición 4",w:2.5}]},
+    {g:"Entregas de casos (≈2,5 % c/u)", items:[
+      {id:"c1",n:"Entrega caso 1",w:2.5},{id:"c2",n:"Entrega caso 2",w:2.5},{id:"c3",n:"Entrega caso 3",w:2.5},{id:"c4",n:"Entrega caso 4",w:2.5}]},
+    {g:"Prácticas evaluadas", items:[
+      {id:"pe1",n:"Práctica evaluada 1",u:"U-II",w:5},{id:"pe2",n:"Práctica evaluada 2",u:"U-III",w:5}]},
+    {g:"Participación (completa / incompleta)", items:PART},
+   ],
+   note:"Las exposiciones y entregas de casos son una estimación del contrato (≈4 de cada, 2,5 % cada una)."},
+  {id:"gca", emo:"✅", code:"Gestión de la Calidad", name:"Gestión de la Calidad",
+   c:"#ffeedd", c2:"#f0a865", c3:"#a3591a",
+   groups:[
+    {g:"Pruebas parciales", items:[
+      {id:"p1",n:"Parcial 1",u:"U-I",w:7},{id:"p2",n:"Parcial 2",u:"U-II",w:7},
+      {id:"p3",n:"Parcial 3",u:"U-III",w:8},{id:"p4",n:"Parcial 4",u:"U-IV",w:8}]},
+    {g:"Prácticas de laboratorio", items:[
+      {id:"l1",n:"Práctica 1",u:"U-I",w:5},{id:"l2",n:"Práctica 2",u:"U-II",w:5},
+      {id:"l3",n:"Práctica 3",u:"U-III",w:5},{id:"l4",n:"Práctica 4",u:"U-IV",w:5}]},
+    {g:"Proyecto", items:[
+      {id:"pa",n:"Informe de avance",u:"U-IV",w:5},{id:"pf",n:"Entrega final del proyecto",u:"S15",w:15},
+      {id:"ex",n:"Exposición del proyecto",u:"S15",w:15}]},
+    {g:"Cuestionarios", items:[
+      {id:"q1",n:"Cuestionario 1",w:2},{id:"q2",n:"Cuestionario 2",w:2},{id:"q3",n:"Cuestionario 3",w:2},{id:"q4",n:"Cuestionario 4",w:3}]},
+    {g:"Foro", items:[{id:"fo",n:"Actividad en el foro",u:"U-V",w:1}]},
+    {g:"Participación (completa / incompleta)", items:PART},
+   ]},
+  {id:"ima", emo:"🌿", code:"Ingeniería del Medio Ambiente", name:"Ingeniería del Medio Ambiente",
+   c:"#def0fb", c2:"#6eb3df", c3:"#2a6e9c",
+   groups:[
+    {g:"Pruebas parciales", items:[
+      {id:"p1",n:"Parcial 1",u:"U-I",w:10},{id:"p2",n:"Parcial 2",u:"U-II",w:10},
+      {id:"p3",n:"Parcial 3",u:"U-III",w:10},{id:"p4",n:"Parcial 4",u:"U-IV",w:10}]},
+    {g:"Prácticas de laboratorio", items:[
+      {id:"l1",n:"Práctica 1",u:"U-I",w:5},{id:"l2",n:"Práctica 2",u:"U-II",w:5},
+      {id:"l3",n:"Práctica 3",u:"U-III",w:5},{id:"l4",n:"Práctica 4",u:"U-IV",w:5}]},
+    {g:"Proyecto (memoria)", items:[
+      {id:"m1",n:"Memoria · entrega parcial 1",u:"U-II",w:4},{id:"m2",n:"Memoria · entrega parcial 2",u:"U-III",w:4},
+      {id:"m3",n:"Memoria · entrega parcial 3",u:"U-IV",w:4},{id:"mf",n:"Memoria final",u:"S14",w:8},
+      {id:"vid",n:"Vídeo presentación",u:"S15",w:5}]},
+    {g:"Cuestionarios (1,5 % c/u)", items:[
+      {id:"q1",n:"Cuestionario 1",u:"U-I",w:1.5},{id:"q2",n:"Cuestionario 2",u:"U-II",w:1.5},{id:"q3",n:"Cuestionario 3",u:"U-II",w:1.5},
+      {id:"q4",n:"Cuestionario 4",u:"U-III",w:1.5},{id:"q5",n:"Cuestionario 5",u:"U-IV",w:1.5},{id:"q6",n:"Cuestionario 6",u:"U-IV",w:1.5}]},
+    {g:"Foro", items:[{id:"fo",n:"Post del foro",w:1}]},
+    {g:"Participación (completa / incompleta)", items:PART},
+   ]},
+];
+
+// ---------- Estado ----------
+const KEY = "notas-uie-2627";
+// Notas ya puestas (13/11/2026): se cargan solas la primera vez que se abre en un dispositivo
+const DEFAULTS = {"target":8,"g":{"arq.l1":9.9,"arq.p1":10,"arq.p2":7.8,"arq.p3":8.2,"tay.p1":10,"tay.p2":9,"tay.r1":8,"tay.r2":8.5,"tay.r3":10,"tay.r4":9,"sie.p1":8.5,"sie.p2":9.3,"gca.p1":5.3,"gca.l1":9.8,"gca.l2":8,"gca.p2":4.5,"gca.l3":10,"gca.p3":7.3,"gca.q1":10,"gca.q2":10,"gca.q3":10,"ima.q1":10,"ima.q2":10,"ima.q3":10,"ima.m1":8,"ima.l1":10,"ima.l2":10,"ima.p1":6.9,"ima.p2":8.6,"ima.p3":6.2,"ima.q4":7}};
+let state = JSON.parse(JSON.stringify(DEFAULTS));
+try{ const s = JSON.parse(localStorage.getItem(KEY)); if(s && s.g) state = s; }catch(e){}
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){} }
+const k = (s,i)=> s.id+"."+i.id;
+
+const fmt = (x,d=2)=> (x==null||isNaN(x)) ? "—" : x.toLocaleString("es-ES",{minimumFractionDigits:d,maximumFractionDigits:d});
+const fmtW = x => x.toLocaleString("es-ES",{maximumFractionDigits:1})+" %";
+function parse(v){
+  if(v==null) return null; v=String(v).trim().replace(",",".");
+  if(v==="") return null; const n=Number(v); return isNaN(n)?NaN:n;
+}
+
+// ---------- Cálculo ----------
+function calc(s){
+  let wEval=0, pts=0, wTot=0;
+  s.groups.forEach(g=>g.items.forEach(i=>{
+    wTot+=i.w; const v=state.g[k(s,i)];
+    if(typeof v==="number" && !isNaN(v)){ wEval+=i.w; pts+=i.w*v; }
+  }));
+  const pend = wTot-wEval;
+  const acc = pts/100;                        // puntos ya asegurados (sobre 10)
+  const media = wEval>0 ? pts/wEval : null;   // media de lo puntuado
+  const lost = wEval/10 - acc;                // puntos perdidos (sobre 10)
+  const max = acc + pend/10;
+  const needAvg = pend>0 ? ((state.target*100 - pts)/pend) : null;
+  return {wEval, wTot, pend, acc, media, lost, max, needAvg};
+}
+
+// ---------- Render ----------
+function render(){
+  document.querySelectorAll(".target button").forEach(b=>b.classList.toggle("on", +b.dataset.t===state.target));
+  const ov = document.getElementById("overview"); ov.innerHTML="";
+  const sub = document.getElementById("subjects");
+  if(!sub.children.length) buildSubjects();
+  let medias=[], evals=[], accs=[];
+  SUBJECTS.forEach(s=>{
+    const r=calc(s);
+    if(r.media!=null) medias.push(r.media);
+    evals.push(r.wEval); accs.push(r.acc);
+    const b=document.createElement("button");
+    b.className="ov"; b.style.cssText=`--c:${s.c};--c2:${s.c2}`;
+    b.innerHTML=`<div class="emo">${s.emo}</div><h3>${s.code}</h3>
+      <div class="ring" style="--p:${r.wEval}"><div><span><b>${r.media==null?"—":fmt(r.media,1)}</b><small>MEDIA</small></span></div></div>
+      <div class="meta"><strong>${fmt(r.wEval,1)} %</strong> evaluado · <strong>${fmt(r.acc,2)}</strong> pts</div>`;
+    b.onclick=()=>document.getElementById("s-"+s.id).scrollIntoView({behavior:"smooth",block:"start"});
+    ov.appendChild(b);
+    updateStats(s,r);
+  });
+  const gm = medias.length? medias.reduce((a,b)=>a+b,0)/medias.length : null;
+  const ge = evals.reduce((a,b)=>a+b,0)/evals.length;
+  const safe = accs.filter(a=>a>=5).length;
+  document.getElementById("global").innerHTML=`
+    <div class="gstat"><small>Media global (lo puntuado)</small><b>${gm==null?"—":fmt(gm)}</b></div>
+    <div class="gstat"><small>% evaluado (promedio)</small><b>${fmt(ge,1)} %</b></div>
+    <div class="gstat"><small>% por evaluar (promedio)</small><b>${fmt(100-ge,1)} %</b></div>
+    <div class="gstat"><small>Aprobadas ya aseguradas</small><b>${safe} / ${SUBJECTS.length}</b></div>`;
+}
+
+function buildSubjects(){
+  const sub=document.getElementById("subjects");
+  SUBJECTS.forEach(s=>{
+    const sec=document.createElement("section");
+    sec.className="subject"; sec.id="s-"+s.id; sec.style.cssText=`--c:${s.c};--c2:${s.c2};--c3:${s.c3}`;
+    let html=`<div class="shead"><div><div class="code">${s.emo} ${s.code}</div><h2>${s.name}</h2></div>
+      <button class="reset" data-s="${s.id}">Borrar notas</button></div><div class="sbody"><div class="items">`;
+    s.groups.forEach(g=>{
+      const gw=g.items.reduce((a,i)=>a+i.w,0);
+      html+=`<div class="group"><h4><span>${g.g}</span><span>${fmtW(gw)}</span></h4>`;
+      g.items.forEach(i=>{
+        const key=k(s,i), v=state.g[key];
+        const ctrl = i.pf
+          ? `<div class="pf" data-k="${key}"><button class="y${v===10?" on":""}" data-v="10" title="Completa">✓</button><button class="n${v===0?" on":""}" data-v="0" title="Incompleta">✗</button></div>`
+          : `<input class="inp${typeof v==="number"?" filled":""}" data-k="${key}" inputmode="decimal" placeholder="—" value="${typeof v==="number"?String(v).replace(".",","):""}" aria-label="${i.n}">`;
+        html+=`<div class="row"><div class="name">${i.n}${i.u?`<small>${i.u}</small>`:""}</div><span class="w">${fmtW(i.w)}</span>${ctrl}</div>`;
+      });
+      html+=`</div>`;
+    });
+    html+=`</div><div class="stats" id="st-${s.id}"></div></div>`;
+    sec.innerHTML=html; sub.appendChild(sec);
+  });
+
+  sub.addEventListener("input",e=>{
+    const t=e.target; if(!t.classList.contains("inp")) return;
+    const n=parse(t.value);
+    if(n===null){ delete state.g[t.dataset.k]; t.classList.remove("err","filled"); }
+    else if(isNaN(n)||n<0||n>10){ t.classList.add("err"); t.classList.remove("filled"); delete state.g[t.dataset.k]; }
+    else { state.g[t.dataset.k]=n; t.classList.remove("err"); t.classList.add("filled"); }
+    save(); render();
+  });
+  sub.addEventListener("click",e=>{
+    const b=e.target.closest(".pf button");
+    if(b){
+      const box=b.parentElement, key=box.dataset.k, v=+b.dataset.v;
+      if(state.g[key]===v) delete state.g[key]; else state.g[key]=v;
+      box.querySelectorAll("button").forEach(x=>x.classList.toggle("on", state.g[key]===+x.dataset.v));
+      save(); render(); return;
+    }
+    const r=e.target.closest(".reset");
+    if(r){
+      if(r.dataset.armed){
+        const sid=r.dataset.s;
+        Object.keys(state.g).forEach(key=>{ if(key.startsWith(sid+".")) delete state.g[key]; });
+        save(); sub.innerHTML=""; render(); toast("Notas borradas");
+      } else {
+        r.dataset.armed="1"; r.textContent="¿Seguro? Pulsa otra vez";
+        setTimeout(()=>{ if(r.isConnected){ delete r.dataset.armed; r.textContent="Borrar notas"; } },2500);
+      }
+    }
+  });
+}
+
+function updateStats(s,r){
+  const el=document.getElementById("st-"+s.id); if(!el) return;
+  const T=state.target;
+  let cls="none", msg="Aún no hay notas: mete la primera y te digo cómo vas ✨";
+  if(r.wEval>0){
+    if(r.acc>=T) { cls="ok"; msg=`🎉 Ya tienes el ${fmt(T,0)} asegurado aunque saques un 0 en todo lo que queda.`; }
+    else if(r.pend<=0){ cls = r.acc>=5?"mid":"bad"; msg = r.acc>=5 ? `Asignatura cerrada con un ${fmt(r.acc)}. Aprobada, pero no llegas al ${fmt(T,0)}.` : `Asignatura cerrada con un ${fmt(r.acc)}. Toca recuperar parciales (AE10).`; }
+    else if(r.max<T){ cls="bad"; msg=`Aunque saques un 10 en todo lo que queda, el máximo es ${fmt(r.max)}. No se llega al ${fmt(T,0)}.`; }
+    else { const n=Math.max(0,r.needAvg); cls = n<=6?"ok":n<=8?"mid":"bad";
+      msg=`Necesitas una media de <b>${fmt(n)}</b> en el ${fmt(r.pend,1)} % que falta para llegar al ${fmt(T,0)}.`; }
+  }
+  const e=r.acc*10, l=Math.max(0,r.lost*10);
+  el.innerHTML=`
+    <div class="big">
+      <div><small>Media de lo puntuado</small><b>${r.media==null?"—":fmt(r.media)}</b></div>
+      <div><small>Nota acumulada</small><b>${fmt(r.acc)}</b></div>
+    </div>
+    <div class="bar"><i class="e" style="width:${e}%"></i><i class="l" style="width:${l}%"></i></div>
+    <div class="legend">
+      <span style="--dot:${s.c2}">Ganado ${fmt(r.acc)}</span>
+      <span style="--dot:#f2c6cf">Perdido ${fmt(Math.max(0,r.lost))}</span>
+      <span style="--dot:#e6dfe8">Pendiente ${fmt(r.pend/10)}</span>
+    </div>
+    <dl>
+      <dt>% puntuado</dt><dd>${fmt(r.wEval,1)} %</dd>
+      <dt>% por puntuar</dt><dd>${fmt(r.pend,1)} %</dd>
+      <dt>Nota máxima posible</dt><dd>${fmt(r.max)}</dd>
+      <dt>Nota si sigues con tu media</dt><dd>${r.media==null?"—":fmt(r.acc + r.media*r.pend/100)}</dd>
+      <dt>Media necesaria para el 5</dt><dd>${r.pend>0? (r.acc>=5?"ya está 💚": (r.max<5?"imposible": fmt(Math.max(0,(500-r.acc*100)/r.pend)))) : "—"}</dd>
+    </dl>
+    <div class="verdict ${cls}">${msg}</div>
+    <div class="note">“Nota acumulada” = puntos que ya tienes sobre 10 (como si lo pendiente fuera un 0). Las actividades ✓/✗ son completa/incompleta y cuentan como 10 o 0.${s.note?" "+s.note:""}</div>`;
+}
+
+// ---------- Objetivo, copia de seguridad ----------
+document.querySelectorAll(".target button").forEach(b=>b.onclick=()=>{ state.target=+b.dataset.t; save(); render(); });
+function toast(t){ const el=document.getElementById("toast"); el.textContent=t; el.classList.add("show"); setTimeout(()=>el.classList.remove("show"),1800); }
+document.getElementById("btnExport").onclick=async()=>{
+  const txt=JSON.stringify(state);
+  try{ await navigator.clipboard.writeText(txt); toast("Copia copiada 📋 guárdala en tus notas"); }
+  catch(e){ openModal(txt, true); }
+};
+const modal=document.getElementById("modal"), ta=document.getElementById("importText");
+function openModal(txt, readonly){
+  modal.classList.add("open"); ta.value=txt||""; ta.readOnly=!!readonly;
+  modal.querySelector("h3").textContent = readonly ? "Copia esta copia de seguridad" : "Restaurar copia de seguridad";
+  document.getElementById("mOk").style.display = readonly?"none":"";
+  if(readonly){ ta.select(); }
+}
+document.getElementById("btnImport").onclick=()=>openModal("",false);
+document.getElementById("mCancel").onclick=()=>modal.classList.remove("open");
+document.getElementById("mOk").onclick=()=>{
+  try{ const s=JSON.parse(ta.value); if(!s||typeof s.g!=="object") throw 0;
+    state={target:s.target||5,g:s.g}; save(); document.getElementById("subjects").innerHTML=""; render();
+    modal.classList.remove("open"); toast("Notas restauradas ✨");
+  }catch(e){ toast("Ese texto no es una copia válida"); }
+};
+
+render();
+</script>
+</body>
+</html>
